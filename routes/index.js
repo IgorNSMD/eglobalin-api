@@ -1,5 +1,6 @@
 var express = require('express');
 var Task = require('../models/task');
+var Categoria = require('../models/categorias');
 
 var router = express.Router();
 

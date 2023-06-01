@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const categoriasSchema = new Schema({
+const categoriaSchema = new mongoose.Schema({
     nombre: {
         type: String,
         trim: true
@@ -16,4 +15,4 @@ const categoriasSchema = new Schema({
 
 });
 
-module.exports = mongoose.model('categorias', categoriasSchema);
+module.exports = mongoose.model('categorias', categoriaSchema);

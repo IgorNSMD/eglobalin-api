@@ -1,10 +1,9 @@
 {
   "name": "todolist",
   "version": "0.0.0",
-  "description": "Backend Eglobalin",
-  "main": "app.js",
+  "private": true,
   "scripts": {
-    "start": "nodemon ./app.js"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "@azure/identity": "^2.0.4",

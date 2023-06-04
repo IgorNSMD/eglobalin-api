@@ -1,24 +1,83 @@
-var express = require('express')
-var routes = require('./routes')
-var mongoose = require('mongoose')
-var bodyParser = require('body-parser');
+var createError = require("http-errors");
+var express = require("express");
+var mongoose = require("mongoose");
+var path = require("path");
+var cookieParser = require("cookie-parser");
+var logger = require("morgan");
+const { format } = require("date-fns");
 
-//conectar mongo
-mongoose.Promise = global.Promise;
+// 1st party dependencies
+var configData = require("./config/connection");
+var indexRouter = require("./routes/index");
 
-mongoose.connect('mongodb://mongodb-ism-server:J6iynSCWTiBXxAzVDVfwb3yov4AC1yzhp6KoZH5SWYX6Jdi8NPGAdwYwM5Ct1aFr9ZboA0vutEPSACDbUvtHHA%3D%3D@mongodb-ism-server.mongo.cosmos.azure.com:10255/eglobalin?ssl=true&retrywrites=false&maxIdleTimeMS=120000&appName=@mongodb-ism-server@',{
-    useNewUrlParser: true
-});
+async function getApp() {
 
-// crear el servidor
-var app = express()
+  // Database
+  var connectionInfo = await configData.getConnectionInfo();
+  mongoose.connect(connectionInfo.DATABASE_URL);
 
-// habilitar body-parser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
+  var app = express();
 
-// rutas de la app
-app.use('/', routes())
+  var port = normalizePort(process.env.PORT || '3000');
+  app.set('port', port);
 
-// pruerto
-app.listen(5000)
+  // view engine setup
+  app.set("views", path.join(__dirname, "views"));
+  app.set("view engine", "pug");
+
+  app.use(logger("dev"));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
+  app.use(cookieParser());
+  app.use(express.static(path.join(__dirname, "public")));
+
+  app.locals.format = format;
+
+  app.use("/", indexRouter);
+  app.use("/js", express.static(__dirname + "/node_modules/bootstrap/dist/js")); // redirect bootstrap JS
+  app.use(
+    "/css",
+    express.static(__dirname + "/node_modules/bootstrap/dist/css")
+  ); // redirect CSS bootstrap
+
+  // catch 404 and forward to error handler
+  app.use(function (req, res, next) {
+    next(createError(404));
+  });
+
+  // error handler
+  app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get("env") === "development" ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render("error");
+  });
+
+  return app;
+}
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+ function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+module.exports = {
+  getApp
+};
+

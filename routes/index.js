@@ -8,6 +8,23 @@ router.get("/message", function (req, res, next) {
   res.json("Hello from the API!");
 });
 
+/* GET /api/categorias */
+router.get("/categorias", function (req, res, next) {
+  const datos = {
+    "key1": "value1",
+    "key2": "value2",
+    "key3": "value3",
+    "key4": 7,
+    "key5": null,
+    "favFriends": ["Kolade", "Nithya", "Dammy", "Jack"],
+    "favPlayers": {"one": "Kante", "two": "Hazard", "three": "Didier"}
+  }
+    
+
+
+  res.json(datos)
+});
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   Task.find()

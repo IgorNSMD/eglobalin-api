@@ -4,6 +4,7 @@ var mongoose = require("mongoose");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var cors = require('cors')
 const { format } = require("date-fns");
 
 // 1st party dependencies
@@ -30,7 +31,7 @@ async function getApp() {
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
   app.use(express.static(path.join(__dirname, "public")));
-
+  app.use(cors())
   app.locals.format = format;
 
   app.use("/", indexRouter);

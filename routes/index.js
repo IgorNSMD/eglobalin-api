@@ -1,5 +1,6 @@
 var express = require('express');
 var Task = require('../models/task');
+var Categoria = require('../models/categoria');
 
 var router = express.Router();
 
@@ -8,21 +9,49 @@ router.get("/message", function (req, res, next) {
   res.json("Hello from the API!");
 });
 
+router.post("/categorias", function name(req, res, next) {
+  const nombre = req.body.nombre;
+  const decripcion = req.body.decripcion;
+  const fechaCreacion = Date.now();
+
+  var categoria = new Categoria({
+    nombre: nombre,
+    decripcion: decripcion,
+    fechaCreacion: fechaCreacion
+  });  
+
+  categoria.save()
+  .then(() => { 
+    console.log(`Agrega nueva categoria ${nombre} - createDate ${fechaCreacion}`)  
+    res.json(categoria)
+    })
+  .catch((err) => {
+      console.log(err);
+      res.send('No grabo registro....');
+  });
+  
+
+})
+
 /* GET /api/categorias */
 router.get("/categorias", function (req, res, next) {
-  const datos = {
-    "key1": "value1",
-    "key2": "value2",
-    "key3": "value3",
-    "key4": 7,
-    "key5": null,
-    "favFriends": ["Kolade", "Nithya", "Dammy", "Jack"],
-    "favPlayers": {"one": "Kante", "two": "Hazard", "three": "Didier"}
-  }
+  // const datos = {
+  //   "key1": "value1",
+  //   "key2": "value2",
+  //   "key3": "value3",
+  //   "key4": 7,
+  //   "key5": null,
+  //   "favFriends": ["Kolade", "Nithya", "Dammy", "Jack"],
+  //   "favPlayers": {"one": "Kante", "two": "Hazard", "three": "Didier"}
+  // }
+
+  // res.json(datos)
     
+  Categoria.find().then((categorias) => {
+    res.json(categorias)
+  })
 
 
-  res.json(datos)
 });
 
 /* GET home page. */
